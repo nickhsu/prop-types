@@ -146,6 +146,27 @@ describe('PropTypesDevelopmentStandalone', () => {
       expect(console.error.calls.argsFor(0)[0]).toContain('some error');
       expect(returnValue).toBe(undefined);
     });
+
+    it('calls the passed in warning logger', () => {
+      const warningLogger = jest.fn()
+      const propTypes = {
+        foo(props, propName, componentName) {
+          throw new Error('some error');
+        },
+      };
+      const props = {foo: 'foo'};
+      const returnValue = PropTypes.checkPropTypes(
+        propTypes,
+        props,
+        'prop',
+        'testComponent',
+        null,
+        warningLogger,
+      );
+
+      expect(warningLogger).toBeCalledWith(false, 'Failed %s type: %s%s', 'prop', 'some error', '');
+      expect(returnValue).toBe(undefined);
+    });
   });
 
   describe('Primitive Types', () => {

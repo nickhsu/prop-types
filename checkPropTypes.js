@@ -27,7 +27,7 @@ if (process.env.NODE_ENV !== 'production') {
  * @param {?Function} getStack Returns the component stack.
  * @private
  */
-function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
+function checkPropTypes(typeSpecs, values, location, componentName, getStack, warningLogger = null) {
   if (process.env.NODE_ENV !== 'production') {
     for (var typeSpecName in typeSpecs) {
       if (typeSpecs.hasOwnProperty(typeSpecName)) {
@@ -51,7 +51,11 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 
           var stack = getStack ? getStack() : '';
 
-          warning(false, 'Failed %s type: %s%s', location, error.message, stack != null ? stack : '');
+          if (warningLogger) {
+            warningLogger(false, 'Failed %s type: %s%s', location, error.message, stack != null ? stack : '');
+          } else {
+            warning(false, 'Failed %s type: %s%s', location, error.message, stack != null ? stack : '');
+          }
         }
       }
     }
